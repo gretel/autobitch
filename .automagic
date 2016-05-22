@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # -*- mode: bash; coding:utf-8; tab-width: 2; indent-tabs-mode: nil; -*-
 # https://github.com/gretel/automagic
 # tom hensel <github@jitter.eu> 2016
@@ -9,7 +10,7 @@ layout_pyenv() {
   # TODO: init pyenv _if_ required
   eval "$(pyenv init -)" || return 2
   if ! pyenv local "$py_ver"; then
-    log_error "pyenv failed."
+    log_error "pyenv local failed!"
   fi
 }
 
@@ -17,12 +18,11 @@ layout_pyenv_venv() {
   local venv_id="$1"
   check_string "$venv_id" || return 1
   export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-  export VIRTUALENV_DISTRIBUTE=1
   # TODO: init pyenv _if_ required
   eval "$(pyenv init -)" || return 2
   eval "$(pyenv virtualenv-init -)" || return 2
   if ! pyenv activate "$venv_id" 2>/dev/null; then
-    log_error "pyenv activate failed."
+    log_error "pyenv activate failed!"
   fi
 }
 
@@ -58,7 +58,6 @@ layout_virtualenv() {
     unset PYTHONHOME
   fi
   export VIRTUAL_ENV="$venv_path"
-  export VIRTUALENV_DISTRIBUTE=1
   PATH_add "$VIRTUAL_ENV/bin"
   local python_rc_file
   if python_rc_file="$HOME/.python/pythonrc.py"; then
@@ -148,7 +147,7 @@ use_auto_ruby () {
   local rb_ver
   if rb_ver=$(gather_file "$rbver_file"); then
     # TODO: support more schemes
-    log_status "version ${rb_ver} required in {$(user_rel_path "$rbver_file")}"
+    log_status "ruby ${rb_ver} required in {$(user_rel_path "$rbver_file")}"
     layout rubies "$rb_ver"
   fi
   local rb_which
@@ -170,14 +169,14 @@ use_auto_python () {
   venv_file="$PWD/.python-venv"
   local venv_id
   if venv_id=$(gather_file "$venv_file"); then
-    log_status "virtualenv ${venv_id} required in {$(user_rel_path "$venv_file")}"
+    log_status "python venv ${venv_id} required in {$(user_rel_path "$venv_file")}"
     layout pyenv_venv "$venv_id"
   elif test -f "$PWD/bin/activate"; then
     local venv_path="$PWD"
     layout virtualenv "$venv_path"
     log_status "local virtual activated {$(user_rel_path "$venv_path")}"
   elif py_ver=$(gather_file "$pyver_file"); then
-    log_status "version ${py_ver} required in {$(user_rel_path "$pyver_file")}"
+    log_status "python ${py_ver} required in {$(user_rel_path "$pyver_file")}"
     layout pyenv "$py_ver"
   fi
   local py_which
@@ -248,7 +247,7 @@ get_abbrv_pwd() {
   echo "${dir##*/}/$base"
 }
 
-log_prefix() {
+auto_log_prefix() {
   local cwd
   cwd="$(get_abbrv_pwd "$1")"
   export DIRENV_LOG_FORMAT
