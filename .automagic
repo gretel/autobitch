@@ -6,6 +6,7 @@
 layout_pyenv() {
   local py_ver="$1"
   check_string "$py_ver" || return 1
+  # TODO: init pyenv _if_ required
   eval "$(pyenv init -)" || return 2
   if ! pyenv local "$py_ver"; then
     log_error "pyenv failed."
@@ -17,6 +18,7 @@ layout_pyenv_venv() {
   check_string "$venv_id" || return 1
   export PYENV_VIRTUALENV_DISABLE_PROMPT=1
   export VIRTUALENV_DISTRIBUTE=1
+  # TODO: init pyenv _if_ required
   eval "$(pyenv init -)" || return 2
   eval "$(pyenv virtualenv-init -)" || return 2
   if ! pyenv activate "$venv_id" 2>/dev/null; then
@@ -248,9 +250,9 @@ get_abbrv_pwd() {
 
 log_prefix() {
   local cwd
-  cwd=$(get_abbrv_pwd "$1")
+  cwd="$(get_abbrv_pwd "$1")"
   export DIRENV_LOG_FORMAT
-  DIRENV_LOG_FORMAT=" $(tput setaf 7)[$cwd]$(tput sgr0) $(tput setaf 7)$(tput bold)%s$(tput sgr0)"
+  DIRENV_LOG_FORMAT=" $(tput setaf 6)[$cwd]$(tput sgr0) $(tput setaf 7)$(tput bold)%s$(tput sgr0)"
 }
 
 ### end
