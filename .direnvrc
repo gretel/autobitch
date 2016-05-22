@@ -1,0 +1,12 @@
+# -*- mode: bash; coding:utf-8; tab-width: 2; indent-tabs-mode: nil; -*-
+
+set -e
+
+# custom stuff like yours
+
+
+# prevent one line of superflous logging output
+export DIRENV_LOG_FORMAT=""
+
+# include logic
+source_env ".automagic"
