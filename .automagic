@@ -1,4 +1,5 @@
 # -*- mode: bash; coding:utf-8; tab-width: 2; indent-tabs-mode: nil; -*-
+# https://github.com/gretel/automagic
 # tom hensel <github@jitter.eu> 2016
 
 ### layout
@@ -23,7 +24,7 @@ layout_pyenv_venv() {
   fi
 }
 
-# TODO: testing
+### FIXME: experimental work in progress!
 layout_pyenv_less() {
   local python_ver="$1"
   check_string "$python_ver" || return 1
@@ -86,7 +87,7 @@ layout_rubies() {
 
 ### use
 
-# TODO: testing
+### FIXME: experimental work in progress!
 use_bundler() {
   local bundler_dir="$1"
   check_string "$bundler_dir" && check_path "$bundler_dir" || return 1
@@ -96,7 +97,8 @@ use_bundler() {
   PATH_add "$bundler_bin_dir"
 }
 
-# TODO: testing, sync with stdlib
+### FIXME: experimental work in progress!
+### TODO: sync with direnv.stdlib
 use_go() {
   local go_dir="$1"
   check_string "$go_dir" || return 1
@@ -121,7 +123,8 @@ use_homebrew() {
   fi
 }
 
-# TODO: testing, sync with stdlib
+### FIXME: experimental work in progress!
+### TODO: sync with direnv.stdlib
 use_nodejs() {
   local node_path="$1"
   check_string "$node_path" && check_path "$node_path" || return 1
@@ -129,7 +132,7 @@ use_nodejs() {
   export NODE_PATH="$node_path/lib/node_modules"
 }
 
-# TODO: testing
+### FIXME: experimental work in progress!
 use_ansible() {
   local ansible_path="$1"
   check_path "$ansible_path" || return 1
@@ -148,7 +151,7 @@ use_auto_ruby () {
   fi
   local rb_which
   if rb_which="$(which ruby)"; then
-  local rb_string
+    local rb_string
     # TODO: use version for comparison
     rb_string=$(expect_usage "$rb_which -v" "ruby")
     log_status "using $rb_string at {$(user_rel_path "$rb_which")}"
@@ -233,8 +236,8 @@ expect_usage() {
       log_error "expected output to match '$should'!"
       return 1
       ;;
-  esac
-}
+    esac
+  }
 
 get_abbrv_pwd() {
   cwd="$(user_rel_path "$1")"

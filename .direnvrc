@@ -2,11 +2,17 @@
 
 set -e
 
-# custom stuff like yours
+### ...
 
 
-# prevent one line of superflous logging output
-export DIRENV_LOG_FORMAT=""
+### automagic
+use_auto() {
+  # prevent one line of verbose logging
+  export DIRENV_LOG_FORMAT=""
 
-# include logic
-source_env ".automagic"
+  ### include logic
+  source_env "$HOME/.automagic"
+
+  ### decorate log output
+  log_prefix "$(expand_path "$1")"
+}
