@@ -28,4 +28,4 @@ use homebrew "${PREFIX-/usr/local}"
 ### argument: prefix of golang installation
 use go "$HOME"
 ### argument: prefix of node.js installation
-use nodejs "${PREFIX-/usr/local}"
+use node_mini "${PREFIX-/usr/local}"

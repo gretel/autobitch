@@ -8,24 +8,19 @@
 layout_pyenv() {
     local py_ver="$1"
     check_string "$py_ver" || return 1
-    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-    # TODO: init pyenv _if_ required
-    # eval "$(pyenv init -)" || return 2
     if ! pyenv local "$py_ver"; then
-        log_error "⚠ calling 'pyenv local "$py_ver"' failed!"
+        log_error "⚠ calling 'pyenv local $py_ver' failed!"; return 2
     fi
+    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 }
 
-layout_pyenv_venv() {
+layout_pyenv_virtualenv() {
     local venv_id="$1"
     check_string "$venv_id" || return 1
-    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
-    # TODO: init pyenv _if_ required
-    # eval "$(pyenv init -)" || return 2
-    # eval "$(pyenv virtualenv-init -)" || return 2
-    if ! source bin/activate "$venv_id"; then
-        log_error "⚠ calling 'pyenv activate "$venv_id"' failed!"
+    if ! pyenv activate "$venv_id"; then
+        log_error "⚠ calling 'pyenv activate $venv_id' failed!"; return 2
     fi
+    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 }
 
 ### FIXME: experimental work in progress!
@@ -33,20 +28,27 @@ layout_pyenv_less() {
     local python_ver="$1"
     check_string "$python_ver" || return 1
     export PYENV_VERSION="$python_ver"
+
     local pyenv_root="$HOME/.pyenv"
     check_path "$pyenv_root" || return 1
     export PYENV_ROOT="$pyenv_root"
+
     local python_shims="$HOME/.pyenv/shims"
     PATH_add "$python_shims"
-    local python_venv_shims="$HOME/.pyenv/plugins/pyenv-virtualenv/shims"
-    PATH_add "$python_venv_shims"
+
+    # local python_venv_shims="$HOME/.pyenv/plugins/pyenv-virtualenv/shims"
+    # PATH_add "$python_venv_shims"
+
     local python_dir="$HOME/.pyenv/versions/$python_ver"
     check_path "$python_dir" || return 1
+
+    export PYTHONPATH="$python_dir/lib/python3.5"
     local python_bin_dir="$python_dir/bin"
+
     check_exec "$python_bin_dir/python" || return 1
     PATH_add "$python_bin_dir"
+
     path_add MANPATH "$python_dir/share/man"
-    export PIP_REQUIRE_VIRTUALENV=1
 }
 
 layout_virtualenv() {
@@ -61,6 +63,10 @@ layout_virtualenv() {
     fi
     export VIRTUAL_ENV="$venv_path"
     PATH_add "$VIRTUAL_ENV/bin"
+
+    # export PIP_REQUIRE_VIRTUALENV=1
+    # TODO: pip caching dir?
+
     local python_rc_file
     if python_rc_file="$HOME/.python/pythonrc.py"; then
         export PYTHONSTARTUP="$python_rc_file"
@@ -128,7 +134,7 @@ use_homebrew() {
 
 ### FIXME: experimental work in progress!
 ### TODO: sync with direnv.stdlib
-use_nodejs() {
+use_node_mini() {
     local node_path="$1"
     check_string "$node_path" && check_path "$node_path" || return 1
     export NODE_HOME="$node_path"
@@ -144,52 +150,51 @@ use_ansible() {
     source "$ansible_path/hacking/env-setup" > /dev/null
 }
 
+### automatic
+
 use_auto_ruby () {
-    local rbver_file="$PWD/.ruby-version"
+    local rb_string
     local rb_ver
+    local rb_which
+    local rbver_file="$PWD/.ruby-version"
     if rb_ver=$(gather_file "$rbver_file"); then
-        # TODO: support more schemes
         log_status "⚑ ruby ${rb_ver} required in {$(user_rel_path "$rbver_file")}"
         layout rubies "$rb_ver"
     fi
-    local rb_which
     if rb_which="$(which ruby)"; then
-        local rb_string
         # TODO: use version for comparison
         rb_string=( $(expect_usage "$rb_which -v" "ruby") )
         log_status "✓ ruby ${rb_string[1]} at {$(user_rel_path "$rb_which")}"
     else
-        log_error "⁈ no ruby in PATH!"
+        log_error "⁈ expected ruby at '$rb_which' to be in PATH!"
     fi
 }
 
 use_auto_python () {
-    local py_ver
-    local pyver_file
-    pyver_file="$PWD/.python-version"
-    local venv_file
-    venv_file="$PWD/.python-venv"
+    local py_string
+    local py_which
     local venv_id
-    if venv_id=$(gather_file "$venv_file"); then
-        log_status "⚑ pyenv ${venv_id} required in {$(user_rel_path "$venv_file")}"
-        # layout pyenv_venv "$venv_id"
-        layout pyenv_venv "$venv_id"
-    elif test -f "$PWD/bin/activate"; then
+    local pyver_file="$PWD/.python-version"
+    local py_ver
+    py_ver=$(gather_file "$pyver_file")
+
+    if test -f "$PWD/bin/activate"; then
         local venv_path="$PWD"
+        log_status "⚑ python virtualenv at {$(user_rel_path "$venv_path")}"
         layout virtualenv "$venv_path"
-        log_status "local virtualenv activated {$(user_rel_path "$venv_path")}"
     elif py_ver=$(gather_file "$pyver_file"); then
         log_status "⚑ python ${py_ver} required in {$(user_rel_path "$pyver_file")}"
-        layout pyenv "$py_ver"
+        # layout pyenv "$py_ver"
+        layout pyenv_less "$py_ver"
+        # TODO: check if venv and bin path match
     fi
-    local py_which
-    if py_which="$(which python)"; then
+    py_which="$(which python)"
+    if test -x "$py_which"; then
         local py_string
-        # TODO: use version for comparison
-        py_string=( $(expect_usage "$py_which -V" "Python") )
+        py_string=( $(expect_usage "$py_which -V" "Python $py_ver") ) || return 1
         log_status "✓ python ${py_string[1]} at {$(user_rel_path "$py_which")}"
     else
-        log_error "⁈ no python in PATH!"
+        log_error "⁈ expected python at '$py_which' to be in PATH!"
     fi
 }
 
@@ -237,7 +242,7 @@ expect_usage() {
             return 1
             ;;
         *)
-            log_error "⧄ expected output to match '$should'!"
+            log_error "⧄ expected output of '$bin' to match '$should' but got '$result'!"
             return 1
             ;;
     esac
