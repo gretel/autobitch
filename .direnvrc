@@ -6,7 +6,7 @@
 
 _check_exec() {
     if ! test -x "$1"; then
-        log_error "⧄ file '${1}' is expected to be executable."; return 1
+        log_error "⧄ file '${1}' is expected to be executable."; return 1;
     fi
 }
 
@@ -21,7 +21,7 @@ use_homebrew() {
 use_bundler() {
     local bundler_dir="$1"
     local bundler_bin_dir="$bundler_dir/bin"
-    _check_exec "$bundler_bin_dir/bundler" || return 1
+    _check_exec "$bundler_bin_dir/bundler" || return 1;
     export BUNDLE_BIN="$bundler_bin_dir"
     PATH_add "$bundler_bin_dir"
 }
@@ -41,7 +41,7 @@ use_go() {
     local go_path_bin="$go_dir/.go/bin"
     PATH_add "$go_path_bin"
     local go_bin_dir="$PREFIX/opt/go/libexec/bin"
-    _check_exec "$go_bin_dir/go" || return 1
+    _check_exec "$go_bin_dir/go" || return 1;
     PATH_add "$go_bin_dir"
 }
 
@@ -49,34 +49,32 @@ use_ansible() {
     local ansible_path="$1"
     export ANSIBLE_HOME="$ansible_path"
     local script="$ansible_path/hacking/env-setup"
-    _check_exec "$script" || return 1
+    _check_exec "$script" || return 1;
     # shellcheck source=/dev/null
     source "$script" > /dev/null
 }
 
-### direnv
+###
+### # direnv
+###
 
-# python version manager
-export PYENV_ROOT="$HOME/.pyenv"
+# prevent logging for now, will be enabled again later  by automagic
+export DIRENV_LOG_FORMAT=
 
-# ruby version manager
-export RY_RUBIES="$HOME/.rubies"
-
-# argument: prefix of installtion
+### these will be in global use
+### - argument: installation prefix
 use homebrew "${PREFIX-/usr/local}"
 use node_mini "${PREFIX-/usr/local}"
 use go "$HOME"
 
-### automagic
-
-# prevent one line of verbose logging
-export DIRENV_LOG_FORMAT=""
+###
+### # automagic
+###
 
 use_auto() {
     ### include logic
     source_env "$HOME/.automagic"
 
     ### decorate log output
-    ### comment out to skip logging for '.direnvrc'
     auto_log_prefix "$(expand_path "$1")"
 }
