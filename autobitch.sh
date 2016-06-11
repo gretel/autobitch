@@ -4,48 +4,9 @@
 # https://github.com/gretel/automagic
 # tom hensel <github@jitter.eu> 2016
 
-# pyenv: : the layout pyenv supposes (~/.pyenv)
-# - wraps around pyenv and therefore requires it
-layout_pyenv() {
-    # check if pyenv is in PATH
-    if ! command -v pyenv >/dev/null; then
-        log_error "⧄ could not find pyenv in PATH!"; return 1;
-    fi
-
-    # check if PYENV_ROOT is set
-    if ! check_dir "${PYENV_ROOT}"; then
-        log_error "⧄ expected PYENV_ROOT to be set!"; return 2;
-    fi
-
-    # version string
-    local py_ver="${1}"
-    check_string "${py_ver}" || return 3;
-
-    # cleanup
-    unset VIRTUAL_ENV PYTHONHOME PYTHONPATH
-
-    # initialize pyenv
-    if ! eval "$(pyenv init -)"; then
-        log_error "⧄ calling 'pyenv init' failed!"; return 4;
-    fi
-
-    # call pyenv to change the environment
-    if ! pyenv shell "${py_ver}"; then
-        log_error "⧄ calling 'pyenv shell ${py_ver}' failed!"; return 5;
-    fi
-
-    # add the pages MANPATH
-    local py_dir=
-    py_dir="${HOME}/.pyenv/versions/${py_ver}"
-    path_add MANPATH "${py_dir}/share/man"
-
-    # common
-    _ready_python
-}
-
-# pyenv_less: the layout pyenv supposes (~/.pyenv)
+# pyenv: the layout pyenv supposes (~/.pyenv)
 # - but don't actually require or call pyenv
-layout_pyenv_less() {
+layout_pyenv() {
     # check if PYENV_ROOT is set
     if ! check_dir "${PYENV_ROOT}"; then
         log_error "⧄ expected PYENV_ROOT to be set!"; return 1;
@@ -213,8 +174,8 @@ use_auto_ruby () {
     if rb_ver=$(gather_file "${rb_ver_file}"); then
         log_status "⚑ ruby ${rb_ver} required in {$(user_rel_path "${rb_ver_file}")}"
         # TODO: abstraction, switching
-        # layout rubies "${rb_ver}"
-        layout ry "${rb_ver}"
+        layout rubies "${rb_ver}"
+        # layout ry "${rb_ver}"
     fi
 
     if rb_which="$(which ruby)"; then
@@ -245,8 +206,7 @@ use_auto_python () {
         layout virtualenv "${venv_path}"
     elif py_ver=$(gather_file "${py_ver_file}"); then
         log_status "⚑ python ${py_ver} required in {$(user_rel_path "${py_ver_file}")}"
-        layout pyenv_less "${py_ver}"
-        # layout pyenv "${py_ver}"
+        layout pyenv "${py_ver}"
         # TODO: check if venv and bin path match
     fi
 
