@@ -1,5 +1,5 @@
 class Autobitch < Formula
-  desc "Script for direnv providing automatism for directory based activation of Python and Ruby Versions by utilizing `pyenv` and `ry`"
+  desc "Script for `direnv` providing automatism for directory based activation of Python and Ruby Versions by utilizing `pyenv` and `ry`"
   homepage "https://github.com/gretel/autobitch"
   url "https://github.com/gretel/autobitch/archive/v0.1.tar.gz"
   sha256 "c4868995bcb1bb79650ced810bbe52503ea9050eb59247d6174d10d60564baca"
