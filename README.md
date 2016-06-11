@@ -4,7 +4,9 @@
 
 Script to provide automatism for directory based activation of **Python** (including [`virtualenv`](http://virtualenv.pypa.io/)) and **Ruby** versions.
 
-Basically, it's just some glue code around some tools i love :hear_no_evil::
+![cardboard-car-mods](https://cloud.githubusercontent.com/assets/80815/15987938/afd60e66-303d-11e6-8804-cb096b72c1f9.jpg)
+
+Basically, it's just some glueish cardboard code around some tools i love:
 
 * [`direnv`](https://github.com/direnv/direnv)
 * [`pyenv`](https://github.com/yyuu/pyenv)
@@ -24,7 +26,7 @@ Basically, it's just some glue code around some tools i love :hear_no_evil::
 
 ### Inspiration
 
-For both tools `autobitch` kinda emulates the behaviour of [`pyenv-virtualenv`](https://github.com/yyuu/pyenv-virtualenv).
+For both languages `autobitch` kinda emulates the behaviour of [`pyenv-virtualenv`](https://github.com/yyuu/pyenv-virtualenv).
 
 ### Logic
 
