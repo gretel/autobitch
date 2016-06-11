@@ -19,7 +19,7 @@ Basically, it's just some glue code around some tools i love :hear_no_evil::
     * Have to have various versions (and dependencies) of the aformentioned languages available
 * Avoid reinventing wheels - use what is rolling fine already
     * Though, enhance functionality while not bloating up too much
-* Support distraction-free workflows
+* Support [*distraction-less*](https://en.wikipedia.org/wiki/Interruption_science) workflows
     * More switching than bitching (_comfort_ and _pleasure_)
 
 ### Inspiration
@@ -61,9 +61,11 @@ As the shell code provided does wrap around the tools and structure of `pyenv` a
 
 > A short-term goal is to allow `autobitch` to work without any tool but `direnv` as long as the convention (directory structure) of the mentioned tools is respected.
 
+On *OSX* installation of these is easy:
+
 ```
-brew install pyenv
-brew install ry
+$ brew install pyenv
+$ brew install ry
 ```
 
 > Please refer to the documentation of these for further information. Both are lightweight but quite powerful so reading is really recommended.
