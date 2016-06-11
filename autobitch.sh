@@ -92,44 +92,44 @@ _ready_python() {
     export PYTHON_HISTORY_FILE="${python_history_file}"
 }
 
-# layout_ry
-layout_ry() {
-    # check if pyenv is in PATH
-    if ! command -v ry >/dev/null; then
-        log_error "⧄ could not find ry in PATH!"; return 1;
-    fi
+# # layout_ry
+# layout_ry() {
+#     # check if pyenv is in PATH
+#     if ! command -v ry >/dev/null; then
+#         log_error "⧄ could not find ry in PATH!"; return 1;
+#     fi
 
-    # check if RY_RUBIES is set
-    if ! check_dir "${RY_RUBIES}"; then
-        log_error "⧄ expected RY_RUBIES to be set!"; return 2;
-    fi
+#     # check if RY_RUBIES is set
+#     if ! check_dir "${RY_RUBIES}"; then
+#         log_error "⧄ expected RY_RUBIES to be set!"; return 2;
+#     fi
 
-    # cleanup
-    unset RUBYPATH GEM_HOME GEM_PATH
+#     # cleanup
+#     unset RUBYPATH GEM_HOME GEM_PATH
 
-    # ry sets symlinks to the selected ruby version
-    # therfore, it will only work if these are in PATH
-    local rb_ver="${1}"
-    check_string "${rb_ver}" || return 3;
-    export RUBY_VERSION="${rb_ver}"
+#     # ry sets symlinks to the selected ruby version
+#     # therfore, it will only work if these are in PATH
+#     local rb_ver="${1}"
+#     check_string "${rb_ver}" || return 3;
+#     export RUBY_VERSION="${rb_ver}"
 
-    # ry puts symlinks to the actual ruby version at this location
-    local ry_shims="${PREFIX}/lib/ry/current/bin"
-    check_dir "${ry_shims}" || return 4;
-    PATH_add "${ry_shims}"
+#     # ry puts symlinks to the actual ruby version at this location
+#     local ry_shims="${PREFIX}/lib/ry/current/bin"
+#     check_dir "${ry_shims}" || return 4;
+#     PATH_add "${ry_shims}"
 
-    # if a ruby is found in the local bin - try to use it
-    # - in ry terms this is called 'shell-local ruby'
-    local rb_bin="${PWD}/bin/ruby"
-    if test -x "${rb_bin}"; then
-        # add this location to PATH (with a higher precedence than the shims)
-        PATH_add "${rb_bin}"
-    else
-        # use ry to resolve the path to the selected version
-        rb_bin="$(ry binpath "${rb_ver}")"
-        PATH_add "${rb_bin}"
-    fi
-}
+#     # if a ruby is found in the local bin - try to use it
+#     # - in ry terms this is called 'shell-local ruby'
+#     local rb_bin="${PWD}/bin/ruby"
+#     if test -x "${rb_bin}"; then
+#         # add this location to PATH (with a higher precedence than the shims)
+#         PATH_add "${rb_bin}"
+#     else
+#         # use ry to resolve the path to the selected version
+#         rb_bin="$(ry binpath "${rb_ver}")"
+#         PATH_add "${rb_bin}"
+#     fi
+# }
 
 # layout_rubies: emulate common layout used by chruby (~/.rubies, ~/.gem)
 layout_rubies() {
@@ -147,7 +147,7 @@ layout_rubies() {
     export RUBY_VERSION="${rb_ver}"
 
     # home of the ruby installation
-    local rb_dir="${HOME}/.rubies/ruby-${rb_ver}"
+    local rb_dir="${HOME}/.rubies/${rb_ver}"
     check_string "${rb_ver}" && check_dir "${rb_dir}" || return 1;
     export RUBY_HOME="${rb_dir}"
 
