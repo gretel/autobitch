@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# -*- mode: bash; coding:utf-8; tab-width: 4; indent-tabs-mode: nil; -*-
-# https://github.com/gretel/automagic
+# https://github.com/gretel/autobitch
 # tom hensel <github@jitter.eu> 2016
 
 # pyenv: the layout pyenv supposes (~/.pyenv)
@@ -92,7 +91,6 @@ _ready_python() {
     fi
     export PYTHON_HISTORY_FILE="${python_history_file}"
 }
-
 
 # layout_ry
 layout_ry() {
@@ -288,5 +286,3 @@ auto_log_prefix() {
     export DIRENV_LOG_FORMAT
     DIRENV_LOG_FORMAT=" $(tput setaf 8)[${cwd}]$(tput sgr0) $(tput setaf 7)%s$(tput sgr0)"
 }
-
-### end
