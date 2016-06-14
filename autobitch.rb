@@ -14,13 +14,18 @@ class Autobitch < Formula
     The inclusion of the script needs to be enabled manually.
     Please add the following to your .direnvrc:
         use_auto() {
-            source_env "$(brew --prefix autobitch)/share/autobitch.sh"
-            auto_log_prefix "$(expand_path "$1")"
+            local autofile="$(brew --prefix autobitch)/share/autobitch.sh"
+            if test -f "$autofile"; then
+                source_env "$autofile"
+                auto_log_prefix "$(expand_path "$1")"
+            fi
         }
     Then actual calls should happen in the individual .envrc at each location:
-        use_auto "$1" # include script
-        use_auto_ruby "$1" # enable autobitching for ruby
-        use_auto_python "$1" # enable autobitching for python
+        if test -f "$(brew --prefix autobitch)/share/autobitch.sh"; then
+            use_auto "$1" # include script
+            use_auto_ruby "$1" # enable autobitching for ruby
+            use_auto_python "$1" # enable autobitching for python
+        fi
         test -d 'bin' && PATH_add 'bin' # add local executables to PATH (binstubs, virtualenv, ..)
     EOS
   end
